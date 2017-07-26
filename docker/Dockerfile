@@ -15,18 +15,20 @@ git clone https://github.com/vrpn/vrpn.git && \
 cd vrpn && mkdir build && cd build && \
 cmake .. && make -j $(($(nproc)-1)) && make install
 
-# Get mosquitto prereqs
-RUN apt-get -y install libc-ares-dev uuid-dev xsltproc
+RUN apt-get -y install libmosquitto-dev
 
-RUN apt-get -y install wget
+# Get mosquitto prereqs
+#RUN apt-get -y install libc-ares-dev uuid-dev xsltproc
+
+#RUN apt-get -y install wget
 
 # Install Mosquitto
-RUN cd $PROGRAMDIR && \
-    wget http://mosquitto.org/files/source/mosquitto-1.4.10.tar.gz && \
-    tar -xvzf mosquitto-1.4.10.tar.gz && \
-    cd mosquitto-1.4.10 && \
-    make -j $(($(nproc) - 1)) && \
-    make install
+#RUN cd $PROGRAMDIR && \
+#    wget http://mosquitto.org/files/source/mosquitto-1.4.10.tar.gz && \
+#    tar -xvzf mosquitto-1.4.10.tar.gz && \
+#    cd mosquitto-1.4.10 && \
+#    make -j $(($(nproc) - 1)) && \
+#    make install
 
 RUN cd $PROGRAMDIR && \
         git clone https://github.com/nlohmann/json.git && \
