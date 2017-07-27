@@ -56,9 +56,10 @@ namespace vrpn_to_mqtt_client
       std::shared_ptr<MQTTClient> mqtt_client;
       std::string full_host_name;
       std::string mqtt_channel;
+      bool pruned_markers = false
 
       // Elapsed time before tracker is removed
-      int timeout_millis = 3000;
+      int timeout_millis = 5000;
 
       json message = {};
 

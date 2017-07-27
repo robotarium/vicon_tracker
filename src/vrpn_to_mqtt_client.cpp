@@ -17,28 +17,6 @@ namespace vrpn_to_mqtt_client
         out of the function.
       */
       banned.insert(std::string("VRPN Control"));
-      // banned.insert(std::string("108"));
-      // banned.insert(std::string("110"));
-      // //banned.insert(std::string("117"));
-      // //banned.insert(std::string("127"));
-      // banned.insert(std::string("136"));
-      // banned.insert(std::string("147"));
-      // banned.insert(std::string("165"));
-      // banned.insert(std::string("157"));
-      // //banned.insert(std::string("158"));
-      // banned.insert(std::string("160"));
-      // //banned.insert(std::string("162"));
-      // //banned.insert(std::string("168"));
-      // banned.insert(std::string("170"));
-      // //banned.insert(std::string("171"));
-      // banned.insert(std::string("172"));
-      // //banned.insert(std::string("175"));
-      // banned.insert(std::string("176"));
-      // //banned.insert(std::string("179"));
-      // banned.insert(std::string("186"));
-      // banned.insert(std::string("181"));
-      // //banned.insert(std::string("193"));
-
 
       std::cout << "Connecting to server at: " << full_host_name << std::endl;
       vrpn_connection = std::shared_ptr<vrpn_Connection>(vrpn_get_connection_by_name(full_host_name.c_str()));
@@ -104,7 +82,7 @@ namespace vrpn_to_mqtt_client
   {
     // Get the current time
     auto current_time = std::chrono::high_resolution_clock::now();
-    std::vector<std::string> to_remove;
+    // std::vector<std::string> to_remove;
 
     for (VrpnToMqttClient::TrackerMap::iterator it = current_trackers.begin(); it != current_trackers.end(); ++it)
     {
@@ -114,17 +92,23 @@ namespace vrpn_to_mqtt_client
       {
         //If tracker has timed out, remove it from the message
         //TODO: Make this cleaner.
-        to_remove.push_back(it->first);
-        banned.insert(it->first); // Make sure that we can't retrack these
-        message.erase(it->first);
+        // to_remove.push_back(it->first);
+        // banned.insert(it->first); // Make sure that we can't retrack these
+
+        // Basically, don't send data if we're not tracking this anymore
+        std::cout "Vicon track no longer getting data for :" << it->first << std::endl;
+        if(message.count(it->first) != 0) // Only erase if it's actually in the message
+        {
+          message.erase(it->first);
+        }
       }
     }
 
-    // Make sure that these timed-out trackers are removed from current trackers.
-    for(auto it = to_remove.begin(); it != to_remove.end(); ++it)
-    {
-      current_trackers.erase(*it);
-    }
+    // // Make sure that these timed-out trackers are removed from current trackers.
+    // for(auto it = to_remove.begin(); it != to_remove.end(); ++it)
+    // {
+    //   current_trackers.erase(*it);
+    // }
   }
 
   void VrpnToMqttClient::check_for_new_trackers()
