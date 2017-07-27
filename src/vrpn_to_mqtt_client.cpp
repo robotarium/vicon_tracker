@@ -95,10 +95,10 @@ namespace vrpn_to_mqtt_client
         // to_remove.push_back(it->first);
         // banned.insert(it->first); // Make sure that we can't retrack these
 
-        // Basically, don't send data if we're not tracking this anymore
-        std::cout "Vicon track no longer getting data for :" << it->first << std::endl;
+        // Basically,1 don't send data if we're not tracking this anymore
         if(message.count(it->first) != 0) // Only erase if it's actually in the message
         {
+          std::cout << "Vicon tracker no longer getting data for :" << it->first << std::endl;
           message.erase(it->first);
         }
       }
