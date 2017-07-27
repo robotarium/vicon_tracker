@@ -98,7 +98,7 @@ namespace vrpn_to_mqtt_client
         // Basically,1 don't send data if we're not tracking this anymore
         if(message.count(it->first) != 0) // Only erase if it's actually in the message
         {
-          std::cout << "Vicon tracker no longer getting data for :" << it->first << std::endl;
+          std::cout << "Vicon tracker no longer getting data for: " << it->first << std::endl;
           message.erase(it->first);
         }
       }
