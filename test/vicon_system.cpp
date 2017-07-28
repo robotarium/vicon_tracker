@@ -6,7 +6,18 @@
 /*
   Main file that will handle connecting to the Vicon tracking system.
 */
-int main(void) {
+int main(int argc, char**argv) {
+
+  // Assume that arguments are mqtt host, port then refresh rate in MS
+  std::string mqtt_host = "";
+  std::string mqtt_port = "";
+  int check_every = 33;
+
+  mqtt_host = std::string(argv[0]);
+  mqtt_port = std::string(argv[1]);
+  check_every = atoi(argv[3]);
+
+  std::cout << "Connecting to MQTT host: " << mqtt_host << ":" << mqtt_port << " at refresh rate (ms): " << check_every << std::endl;
 
   vrpn_to_mqtt_client::VrpnToMqttClient vrpn_to_mqtt(
     std::string("192.168.10.1"), std::to_string(3883), // Vicon address
@@ -20,8 +31,6 @@ int main(void) {
 
   auto current_time = std::chrono::high_resolution_clock::now();
   auto elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - current_time);
-
-  int check_every = 33;
 
   while(true) {
     current_time = std::chrono::high_resolution_clock::now();
