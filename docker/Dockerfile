@@ -40,7 +40,7 @@ RUN cd $PROGRAMDIR && \
         make install && \
     ln -s /usr/local/include/nlohmann/json.hpp /usr/include/json.hpp
 
-ENV REBUILD-THIS-VARIABLE 1
+ENV REBUILD-THIS-VARIABLE 2
 
 RUN cd $PROGRAMDIR && \
 git clone https://github.com/robotarium/vicon_tracker.git \

@@ -13,8 +13,8 @@ int main(int argc, char**argv) {
   std::string mqtt_port = "";
   int check_every = 33;
 
-  mqtt_host = std::string(argv[0]);
-  mqtt_port = std::string(argv[1]);
+  mqtt_host = std::string(argv[1]);
+  mqtt_port = std::string(argv[2]);
   check_every = atoi(argv[3]);
 
   std::cout << "Connecting to MQTT host: " << mqtt_host << ":" << mqtt_port << " at refresh rate (ms): " << check_every << std::endl;
