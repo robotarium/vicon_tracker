@@ -21,7 +21,7 @@ int main(int argc, char**argv) {
 
   vrpn_to_mqtt_client::VrpnToMqttClient vrpn_to_mqtt(
     std::string("192.168.10.1"), std::to_string(3883), // Vicon address
-    std::string("192.168.1.2"), std::to_string(1884), // MQTT address
+    mqtt_host, mqtt_port, // MQTT address
     std::string("overhead_tracker/all_robot_pose_data"));
 
   /*
