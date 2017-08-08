@@ -189,6 +189,11 @@ namespace vrpn_to_mqtt_client
     {
       (*data->message)[data->name->c_str()]["powerData"] = -1;
     }
+
+    if((*data->message)[data->name->c_str()]["charging"] == NULL)
+    {
+      (*data->message)[data->name->c_str()]["charging"] = -1;
+    }
     data->message_mutex->unlock();
   }
 }
