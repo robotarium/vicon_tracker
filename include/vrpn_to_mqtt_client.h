@@ -5,12 +5,14 @@
 #include <vrpn_Tracker.h>
 #include <vrpn_Connection.h>
 #include <map>
+#include <mutex>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <memory>
 #include <json.hpp>
 #include <math.h>
+#include <functional>
 
 /* Convenience declaration */
 using json = nlohmann::json;
@@ -18,7 +20,7 @@ using json = nlohmann::json;
 namespace vrpn_to_mqtt_client
 {
 
-  using namespace mqtt_client;
+  //using namespace mqtt_client;
 
   /*
     Struct for holding relevant tracker data.  This is stored in a map and
@@ -30,6 +32,7 @@ namespace vrpn_to_mqtt_client
     std::shared_ptr<std::string> name;
     std::shared_ptr<vrpn_Tracker_Remote> tracker;
     json* message;
+    std::mutex* message_mutex;
   };
 
   class VrpnToMqttClient
@@ -50,17 +53,18 @@ namespace vrpn_to_mqtt_client
       void publish_mqtt_data();
       void prune_unresponsive_clients();
 
+      json message = {};
+      std::mutex message_mutex;
+      std::shared_ptr<mqtt_client::MQTTClient> mqtt_client;
+
     private:
 
       std::shared_ptr<vrpn_Connection> vrpn_connection;
-      std::shared_ptr<MQTTClient> mqtt_client;
       std::string full_host_name;
       std::string mqtt_channel;
 
       // Elapsed time before tracker is removed
       int timeout_millis = 5000;
-
-      json message = {};
 
       /*
         Tracker map keeps track of the current trackers that are currently

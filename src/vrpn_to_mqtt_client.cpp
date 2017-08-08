@@ -1,6 +1,8 @@
 #include "vrpn_to_mqtt_client.h"
 #include <iostream>
 #include <chrono>
+#include <functional>
+#include <mutex>
 
 namespace vrpn_to_mqtt_client
 {
@@ -32,8 +34,8 @@ namespace vrpn_to_mqtt_client
 
       std::cout << "Connected to server!" << std::endl;
 
-      mqtt_client = std::make_shared<MQTTClient>(mqtt_host, std::stoi(mqtt_port));
-      mqtt_client->start();
+      this->mqtt_client = std::make_shared<mqtt_client::MQTTClient>(mqtt_host, std::stoi(mqtt_port));
+      this->mqtt_client->start();
   }
 
   /*
@@ -132,7 +134,8 @@ namespace vrpn_to_mqtt_client
         data->tracker = std::make_shared<vrpn_Tracker_Remote>(data->name->c_str(), vrpn_connection.get());
         data->time_since_last_message = std::chrono::high_resolution_clock::now();
         data->tracker->shutup = true; // Turn off messages from tracker
-        data->message = &message;
+        data->message = &this->message;
+        data->message_mutex = &this->message_mutex;
 
         //TODO: Should probably provide 'this' as context.  I have no idea why unregister_change_handler works
         // here...
@@ -164,8 +167,10 @@ namespace vrpn_to_mqtt_client
     tracker_data_t* data = static_cast<tracker_data_t*>(user_data);
 
     // TODO: Add timestamp to message
+
     (data->time_since_last_message) = std::chrono::high_resolution_clock::now();
 
+    data->message_mutex->lock();
     (*data->message)[data->name->c_str()]["x"] = tracker_data.pos[0]*1;
     (*data->message)[data->name->c_str()]["y"] = tracker_data.pos[1];
     (*data->message)[data->name->c_str()]["z"] = tracker_data.pos[2]*1;
@@ -181,5 +186,6 @@ namespace vrpn_to_mqtt_client
     // (*data->message)[data->name->c_str()]["theta"] = std::atan2(std::sin((*data->message)[data->name->c_str()]["theta"]), std::cos((*data->message)[data->name->c_str()]["theta"]))
 
     (*data->message)[data->name->c_str()]["powerData"] = -1;
+    data->message_mutex->unlock();
   }
 }

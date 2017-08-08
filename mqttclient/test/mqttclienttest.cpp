@@ -13,27 +13,10 @@ std::function<void(std::string, std::string)> stdf_callback = &callback;
 int main(void) {
 
 	//MQTTClient m("localhost", 1884);
-  MQTTClient m("192.168.1.2", 1884);
+  mqtt_client::MQTTClient m("143.215.159.23", 1884);
   //MQTTClient m("192.168.1.32", 1883);
+  m.subscribe("overhead_tracker/all_robot_pose_data", stdf_callback);
   m.start();
-
-  m.subscribe("/tracker/overhead", stdf_callback);
-
-  std::cin.ignore();
-
-  m.async_publish("/tracker/overhead", "hi!");
-  m.async_publish("/tracker/overhead", "hi!");
-  m.async_publish("/tracker/overhead", "hi!");
-
-  std::cin.ignore();
-
-  m.unsubscribe("/tracker/overhead");
-
-  std::cin.ignore();
-
-  m.async_publish("/tracker/overhead", "hi!");
-  m.async_publish("/tracker/overhead", "hi!");
-  m.async_publish("/tracker/overhead", "hi!");
 
   std::cin.ignore();
 
