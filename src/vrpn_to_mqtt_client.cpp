@@ -137,6 +137,14 @@ namespace vrpn_to_mqtt_client
         data->message = &this->message;
         data->message_mutex = &this->message_mutex;
 
+        this->message_mutex.lock();
+        this->message[*data->name]["x"] = -1;
+        this->message[*data->name]["y"] = -1;
+        this->message[*data->name]["z"] = -1;
+        this->message[*data->name]["theta"] = -1;
+        this->message[*data->name]["powerData"] = -1;
+        this->message[*data->name]["charging"] = -1;
+        this->message_mutex.unlock();
         //TODO: Should probably provide 'this' as context.  I have no idea why unregister_change_handler works
         // here...
         data->tracker.get()->register_change_handler(data.get(), &VrpnToMqttClient::handle_pose);
@@ -185,15 +193,7 @@ namespace vrpn_to_mqtt_client
     // (*data->message)[data->name->c_str()]["theta"] += M_PI;
     // (*data->message)[data->name->c_str()]["theta"] = std::atan2(std::sin((*data->message)[data->name->c_str()]["theta"]), std::cos((*data->message)[data->name->c_str()]["theta"]))
 
-    if((*data->message)[data->name->c_str()]["powerData"] == NULL)
-    {
-      (*data->message)[data->name->c_str()]["powerData"] = -1;
-    }
-
-    if((*data->message)[data->name->c_str()]["charging"] == NULL)
-    {
-      (*data->message)[data->name->c_str()]["charging"] = -1;
-    }
+    std::cout << *data->message << std::endl;
     data->message_mutex->unlock();
   }
 }
