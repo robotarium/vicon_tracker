@@ -24,6 +24,17 @@ void power_data_callback(std::string topic, std::string message) {
   std::stringstream ss(topic);
   ss >> id >> tmp;
 
+  vrpn_to_mqtt->message_mutex.lock();
+
+  //std::cout << vrpn_to_mqtt->message << std::endl;
+
+  // Skip out if we're not tracking this robot
+  if(vrpn_to_mqtt->message.count(std::to_string(id)) == 0)
+  {
+    vrpn_to_mqtt->message_mutex.unlock();
+    return;
+  }
+
 	if(debug) {
 		std::cout << "Topic				: " << topic << std::endl;
 		std::cout << "Message			: " << message << std::endl;
@@ -43,9 +54,7 @@ void power_data_callback(std::string topic, std::string message) {
 
 			/* Check if robot id has been extracted from topic */
 			if(id >= 0) {
-           vrpn_to_mqtt->message_mutex.lock();
 			     vrpn_to_mqtt->message[std::to_string(id)]["powerData"] = data["vBat"];
-           vrpn_to_mqtt->message_mutex.unlock();
 			}
 	}
 
@@ -58,14 +67,14 @@ void power_data_callback(std::string topic, std::string message) {
 
       /* Check if robot id has been extracted from topic */
       if(id >= 0) {
-        vrpn_to_mqtt->message_mutex.lock();
-        vrpn_to_mqtt->message[std::to_string(id)]["charging"] = ((float) data["charging"] > 0.0);
-        vrpn_to_mqtt->message_mutex.unlock();
+        vrpn_to_mqtt->message[std::to_string(id)]["charging"] = data["charging"]; //((float)  > 0.0);
       }
   }
   } catch (const std::exception& e) {
-    std::cout << "Exception..." << std::endl;
+    std::cout << e.what() << "Exception..." << std::endl;
   }
+
+  vrpn_to_mqtt->message_mutex.unlock();
 }
 
 /*

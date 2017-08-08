@@ -98,11 +98,13 @@ namespace vrpn_to_mqtt_client
         // banned.insert(it->first); // Make sure that we can't retrack these
 
         // Basically,1 don't send data if we're not tracking this anymore
+        this->message_mutex.lock();
         if(message.count(it->first) != 0) // Only erase if it's actually in the message
         {
           std::cout << "Vicon tracker no longer getting data for: " << it->first << std::endl;
           message.erase(it->first);
         }
+        this->message_mutex.unlock();
       }
     }
 
@@ -137,14 +139,6 @@ namespace vrpn_to_mqtt_client
         data->message = &this->message;
         data->message_mutex = &this->message_mutex;
 
-        this->message_mutex.lock();
-        this->message[*data->name]["x"] = -1;
-        this->message[*data->name]["y"] = -1;
-        this->message[*data->name]["z"] = -1;
-        this->message[*data->name]["theta"] = -1;
-        this->message[*data->name]["powerData"] = -1;
-        this->message[*data->name]["charging"] = -1;
-        this->message_mutex.unlock();
         //TODO: Should probably provide 'this' as context.  I have no idea why unregister_change_handler works
         // here...
         data->tracker.get()->register_change_handler(data.get(), &VrpnToMqttClient::handle_pose);
@@ -163,7 +157,9 @@ namespace vrpn_to_mqtt_client
   void VrpnToMqttClient::publish_mqtt_data()
   {
     //std::cout << message.dump(4) << std::endl;
+    this->message_mutex.lock();
     mqtt_client->async_publish(mqtt_channel, message.dump());
+    this->message_mutex.unlock();
   }
 
   /*
@@ -190,9 +186,19 @@ namespace vrpn_to_mqtt_client
 
     (*data->message)[data->name->c_str()]["theta"] = std::atan2(2.0f*(qw*qz + qx*qy), 1.0f - 2.0f*(qy*qy + qz*qz));
 
+    if((*data->message)[data->name->c_str()].count("powerData") == 0)
+    {
+      (*data->message)[data->name->c_str()]["powerData"] = -1;
+    }
+
+    if((*data->message)[data->name->c_str()].count("charging") == 0)
+    {
+      (*data->message)[data->name->c_str()]["charging"] = -1;
+    }
+
     // (*data->message)[data->name->c_str()]["theta"] += M_PI;
     // (*data->message)[data->name->c_str()]["theta"] = std::atan2(std::sin((*data->message)[data->name->c_str()]["theta"]), std::cos((*data->message)[data->name->c_str()]["theta"]))
-    
+
     data->message_mutex->unlock();
   }
 }
