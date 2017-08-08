@@ -185,7 +185,7 @@ namespace vrpn_to_mqtt_client
     // (*data->message)[data->name->c_str()]["theta"] += M_PI;
     // (*data->message)[data->name->c_str()]["theta"] = std::atan2(std::sin((*data->message)[data->name->c_str()]["theta"]), std::cos((*data->message)[data->name->c_str()]["theta"]))
 
-    (*data->message)[data->name->c_str()]["powerData"] = -1;
+    //(*data->message)[data->name->c_str()]["powerData"] = -1;
     data->message_mutex->unlock();
   }
 }
