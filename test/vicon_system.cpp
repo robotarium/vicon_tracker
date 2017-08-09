@@ -96,11 +96,11 @@ int main(int argc, char**argv) {
     mqtt_host, mqtt_port, // MQTT address
     std::string("overhead_tracker/all_robot_pose_data"));
 
-  std::function<void(std::string, std::string)> stdf_callback = &power_data_callback;
-  for (int i = 100; i <= 200; ++i)
-  {
-    vrpn_to_mqtt->mqtt_client->subscribe(std::to_string(i) + "/power_data", stdf_callback);
-  }
+  // std::function<void(std::string, std::string)> stdf_callback = &power_data_callback;
+  // for (int i = 100; i <= 200; ++i)
+  // {
+  //   vrpn_to_mqtt->mqtt_client->subscribe(std::to_string(i) + "/power_data", stdf_callback);
+  // }
 
   /*
     TODO: Change system to accept publishing time and accepted trackers as CLI
@@ -118,6 +118,7 @@ int main(int argc, char**argv) {
     vrpn_to_mqtt->publish_mqtt_data();
     elapsed_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - current_time);
 
+    std::cout << (check_every - elapsed_time.count()) << std::endl;
     std::this_thread::sleep_for(std::chrono::milliseconds(check_every - elapsed_time.count()));
   }
 

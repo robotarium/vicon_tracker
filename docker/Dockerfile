@@ -40,16 +40,16 @@ RUN cd $PROGRAMDIR && \
         make install && \
     ln -s /usr/local/include/nlohmann/json.hpp /usr/include/json.hpp
 
+RUN apt-get -y install python3 python3-pip
+
+# Get vizier framework
+RUN git clone https://github.com/robotarium/vizier.git
+RUN pip3 install -r vizier/python/requirements.txt vizier/python/
+
 ENV REBUILD-THIS-VARIABLE 2
 
 RUN cd $PROGRAMDIR && \
 git clone https://github.com/robotarium/vicon_tracker.git \
 && cd vicon_tracker && mkdir build && cd build && \
 cmake .. && make
-
-RUN apt-get -y install python3 python3-pip
-
-# Get vizier framework
-RUN git clone https://github.com/robotarium/vizier.git
-RUN pip3 install -r vizier/python/requirements.txt vizier/python/
 

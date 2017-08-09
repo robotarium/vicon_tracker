@@ -98,7 +98,7 @@ namespace vrpn_to_mqtt_client
         // banned.insert(it->first); // Make sure that we can't retrack these
 
         // Basically,1 don't send data if we're not tracking this anymore
-        std::lock_guard<std::mutex> lock(this->message_mutex);
+        //std::lock_guard<std::mutex> lock(this->message_mutex);
         if(message.count(it->first) != 0) // Only erase if it's actually in the message
         {
           std::cout << "Vicon tracker no longer getting data for: " << it->first << std::endl;
@@ -155,7 +155,7 @@ namespace vrpn_to_mqtt_client
 
   void VrpnToMqttClient::publish_mqtt_data()
   {
-    std::lock_guard<std::mutex> lock(this->message_mutex);
+    //std::lock_guard<std::mutex> lock(this->message_mutex);
     mqtt_client->async_publish(mqtt_channel, message.dump());
   }
 
@@ -171,7 +171,7 @@ namespace vrpn_to_mqtt_client
 
     (data->time_since_last_message) = std::chrono::high_resolution_clock::now();
 
-    std::lock_guard<std::mutex> lock(*data->message_mutex);
+    //std::lock_guard<std::mutex> lock(*data->message_mutex);
 
     (*data->message)[data->name->c_str()]["x"] = tracker_data.pos[0]*1;
     (*data->message)[data->name->c_str()]["y"] = tracker_data.pos[1];
