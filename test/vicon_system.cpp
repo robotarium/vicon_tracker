@@ -24,14 +24,14 @@ void power_data_callback(std::string topic, std::string message) {
   std::stringstream ss(topic);
   ss >> id >> tmp;
 
-  vrpn_to_mqtt->message_mutex.lock();
+  // Should auto-unlock when this goes out of scope
+  std::lock_guard<std::mutex> lock(vrpn_to_mqtt->message_mutex);
 
   //std::cout << vrpn_to_mqtt->message << std::endl;
 
   // Skip out if we're not tracking this robot
   if(vrpn_to_mqtt->message.count(std::to_string(id)) == 0)
   {
-    vrpn_to_mqtt->message_mutex.unlock();
     return;
   }
 
@@ -73,8 +73,6 @@ void power_data_callback(std::string topic, std::string message) {
   } catch (const std::exception& e) {
     std::cout << e.what() << "Exception..." << std::endl;
   }
-
-  vrpn_to_mqtt->message_mutex.unlock();
 }
 
 /*
